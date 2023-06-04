@@ -68,9 +68,9 @@ We provide the pre-trained model weights and config files which was used for tra
 ### Visual Genome 
 |      Task        | mR@20 | mR@50 | mR@100 |  R@20 | R@50  | R@100  |                      Link (Google Drive)                     |
 | :--------------: | :---: | :---: |  :---: | :---: | :---: | :----: | :----------------------------------------------------------: |
-| PredCls          | 25.64 | 30.87 | 33.41  | 48.01 | 55.67 | 57.94  |                                                              |
-| SGCls            | 14.35 | 17.47 | 18.87  | 28.87 | 32.92 | 34.26  |                                                              |
-| SGDet            | 10.57 | 14.12 | 16.47  | 17.85 | 24.51 | 28.93  |                                                              |
+| PredCls          | 25.64 | 30.87 | 33.41  | 48.01 | 55.67 | 57.94  |                          [Link](https://drive.google.com/drive/folders/1_S90m0TIZxOD8qjyJtfnhn1AHiAW0Y-N?usp=drive_link)                        |
+| SGCls            | 14.35 | 17.47 | 18.87  | 28.87 | 32.92 | 34.26  |                          [Link](https://drive.google.com/drive/folders/1zF-3eL9_993LdAK_f5xxLrV6kTvzxjsh?usp=drive_link)                                    |
+| SGDet            | 10.57 | 14.12 | 16.47  | 17.85 | 24.51 | 28.93  |                          [Link](https://drive.google.com/drive/folders/1rkTxRiPP_EzmiRbUGY0BnFiri5v1Rn9J?usp=drive_link)                                    |
 
 
 ### OpenImages 

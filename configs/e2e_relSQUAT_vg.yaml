@@ -5,11 +5,15 @@ DATALOADER:
   SIZE_DIVISIBILITY: 32
 DATASETS:
   LOAD_PRECOMPUTE_DETECTION_BOX: false
-  TRAIN: ("openimage_v4_train",)
-  VAL: ("openimage_v4_val",)
-  TEST: ("openimage_v4_val",)
+  TEST:
+  - VG_stanford_filtered_with_attribute_test
+  TRAIN:
+  - VG_stanford_filtered_with_attribute_train
+  VAL:
+  - VG_stanford_filtered_with_attribute_val
 DEBUG: false
 DTYPE: float32
+EXPERIMENT_NAME: FinalExp3
 GLOBAL_BUFFER_ON: false
 GLOVE_DIR: datasets/vg/stanford_spilt/glove
 INPUT:
@@ -68,9 +72,8 @@ MODEL:
     NUM_GROUPS: 32
   KEYPOINT_ON: false
   MASK_ON: false
-  RETINANET_ON: false
   META_ARCHITECTURE: GeneralizedRCNN
-  PRETRAINED_DETECTOR_CKPT: "checkpoints/detection/(2020-10-29_22)openimage_v4_detector_larger_lr_more_step_adjustment/model_0045000.pth"
+  PRETRAINED_DETECTOR_CKPT: checkpoints/detection/pretrained_faster_rcnn/vg_faster_det.pth
   RELATION_ON: true
   RESNETS:
     BACKBONE_OUT_CHANNELS: 256
@@ -89,7 +92,40 @@ MODEL:
     TRANS_FUNC: BottleneckWithFixedBatchNorm
     WIDTH_PER_GROUP: 8
     WITH_MODULATED_DCN: false
-
+  RETINANET:
+    ANCHOR_SIZES:
+    - 32
+    - 64
+    - 128
+    - 256
+    - 512
+    ANCHOR_STRIDES:
+    - 8
+    - 16
+    - 32
+    - 64
+    - 128
+    ASPECT_RATIOS:
+    - 0.5
+    - 1.0
+    - 2.0
+    BBOX_REG_BETA: 0.11
+    BBOX_REG_WEIGHT: 4.0
+    BG_IOU_THRESHOLD: 0.4
+    FG_IOU_THRESHOLD: 0.5
+    INFERENCE_TH: 0.05
+    LOSS_ALPHA: 0.25
+    LOSS_GAMMA: 2.0
+    NMS_TH: 0.4
+    NUM_CLASSES: 81
+    NUM_CONVS: 4
+    OCTAVE: 2.0
+    PRE_NMS_TOP_N: 1000
+    PRIOR_PROB: 0.01
+    SCALES_PER_OCTAVE: 3
+    STRADDLE_THRESH: 0
+    USE_C5: true
+  RETINANET_ON: false
   ROI_ATTRIBUTE_HEAD:
     ATTRIBUTE_BGFG_RATIO: 3
     ATTRIBUTE_BGFG_SAMPLE: true
@@ -106,7 +142,7 @@ MODEL:
     DILATION: 1
     FEATURE_EXTRACTOR: FPN2MLPFeatureExtractor
     MLP_HEAD_DIM: 4096
-    NUM_CLASSES: 58     
+    NUM_CLASSES: 151
     NUM_STACKED_CONVS: 4
     POOLER_RESOLUTION: 7
     POOLER_SAMPLING_RATIO: 2
@@ -133,11 +169,74 @@ MODEL:
     POST_NMS_PER_CLS_TOPN: 300
     SCORE_THRESH: 0.01
     USE_FPN: true
+  ROI_KEYPOINT_HEAD:
+    CONV_LAYERS:
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    FEATURE_EXTRACTOR: KeypointRCNNFeatureExtractor
+    MLP_HEAD_DIM: 1024
+    NUM_CLASSES: 17
+    POOLER_RESOLUTION: 14
+    POOLER_SAMPLING_RATIO: 0
+    POOLER_SCALES: &id001
+    - 0.0625
+    PREDICTOR: KeypointRCNNPredictor
+    RESOLUTION: 14
+    SHARE_BOX_FEATURE_EXTRACTOR: true
+  ROI_MASK_HEAD:
+    CONV_LAYERS:
+    - 256
+    - 256
+    - 256
+    - 256
+    DILATION: 1
+    FEATURE_EXTRACTOR: ResNet50Conv5ROIFeatureExtractor
+    MLP_HEAD_DIM: 1024
+    POOLER_RESOLUTION: 14
+    POOLER_SAMPLING_RATIO: 0
+    POOLER_SCALES: *id001
+    POSTPROCESS_MASKS: false
+    POSTPROCESS_MASKS_THRESHOLD: 0.5
+    PREDICTOR: MaskRCNNC4Predictor
+    RESOLUTION: 14
+    SHARE_BOX_FEATURE_EXTRACTOR: true
+    USE_GN: false
   ROI_RELATION_HEAD:
     ADD_GTBOX_TO_PROPOSAL_IN_TRAIN: true
     BATCH_SIZE_PER_IMAGE: 1000
-    BODY_CATE_DROP_RATE: 0.5
-    BODY_REPEAT_FACTOR: 0.07
+    SQUAT_MODULE:
+      BETA: 0.7
+      RHO: 0.7
+      NUM_DECODER: 3
+      PRETRAIN_MASK: true
+      PRETRAIN_MASK_ITER: 2000
+      SLOW_MASK_PREDICTOR: true
+    BGNN_MODULE:
+      APPLY_GT: false
+      EDGE_FEATURES_REPRESENTATION: union
+      GRAPH_HIDDEN_DIM: 512
+      GRAPH_ITERATION_NUM: 3
+      ITERATE_MP_PAIR_REFINE: 3
+      LEARNABLE_SCALING_WEIGHT:
+      - 3.12
+      - 0.06
+      MP_ON_VALID_PAIRS: true
+      MP_VALID_PAIRS_NUM: 4096
+      RELATION_CONFIDENCE_AWARE: true
+      RELNESS_MP_WEIGHTING: true
+      RELNESS_MP_WEIGHTING_SCORE_RECALIBRATION_METHOD: learnable_scaling
+      SHARE_PARAMETERS_EACH_ITER: false
+      SHARE_RELATED_MODEL_ACROSS_REFINE_ITER: false
+      SKIP_CONNECTION_ON_OUTPUT: false
+      SPLIT_GRAPH4OBJ_REL: false
+    BODY_CATE_DROP_RATE: 1.0
+    BODY_REPEAT_FACTOR: 0.018
     CAUSAL:
       AUXILIARY_LOSS: true
       CONTEXT_LAYER: motifs
@@ -157,9 +256,10 @@ MODEL:
     DATA_RESAMPLING: true
     DATA_RESAMPLING_METHOD: bilvl
     DATA_RESAMPLING_PARAM:
-      INSTANCE_DROP_RATE: 0.85
+      INSTANCE_DROP_RATE: 0.9
+      REPEAT_DICT_DIR: ''
       REPEAT_FACTOR: 0.1
-    EDGE_FEATURES_REPRESENTATION: fusion
+    EDGE_FEATURES_REPRESENTATION: obj_pair
     EMBED_DIM: 200
     EVALUATE_REL_PROPOSAL: true
     FEATURE_EXTRACTOR: RelationFeatureExtractor
@@ -195,50 +295,90 @@ MODEL:
       REL_PRIOR_MATRIX_DIR: datasets/vg/stanford_spilt/kern_prior/rel_matrix.npy
       STATISTICS_PRIOR_KNOWLEDGE: true
     LABEL_SMOOTHING_LOSS: false
-    LONGTAIL_PART_DICT: [None, 'h', 'b', 'b', 'b', 'b', 't', 'b', 't', 't']
+    LONGTAIL_PART_DICT:
+    - null
+    - b
+    - t
+    - t
+    - t
+    - b
+    - b
+    - b
+    - h
+    - b
+    - t
+    - b
+    - t
+    - t
+    - t
+    - t
+    - b
+    - t
+    - t
+    - b
+    - h
+    - b
+    - h
+    - b
+    - t
+    - b
+    - t
+    - t
+    - t
+    - h
+    - h
+    - h
+    - t
+    - b
+    - t
+    - b
+    - t
+    - t
+    - b
+    - t
+    - b
+    - b
+    - t
+    - b
+    - t
+    - t
+    - b
+    - b
+    - h
+    - b
+    - b
     MAX_PROPOSAL_PAIR: 4096
-    BGNN_MODULE:
+    MSDN_MODULE:
+      APPLY_GT: false
       EDGE_FEATURES_REPRESENTATION: union
-      GATING_WITH_RELNESS_LOGITS: false
       GRAPH_HIDDEN_DIM: 512
       GRAPH_ITERATION_NUM: 3
-      APPLY_GT: False
-      ITERATE_MP_PAIR_REFINE: 3
-      RELATION_CONFIDENCE_AWARE: True
-      MP_ON_VALID_PAIRS: True
-      MP_VALID_PAIRS_NUM: 128
-      RELNESS_MP_WEIGHTING: true
-      RELNESS_MP_WEIGHTING_SCORE_RECALIBRATION_METHOD: learnable_scaling
-      LEARNABLE_SCALING_WEIGHT: (3.12, 0.06)
-      SHARE_PARAMETERS_EACH_ITER: false
-      SHARE_RELATED_MODEL_ACROSS_REFINE_ITER: false
-      SKIP_CONNECTION_ON_OUTPUT: false
-      SPLIT_GRAPH4OBJ_REL: false
-    NUM_CLASSES: 10    
+      SHARE_PARAMETERS_EACH_ITER: true
+    NUM_CLASSES: 51
     NUM_SAMPLE_PER_GT_REL: 4
     OBJECT_CLASSIFICATION_MANNER: replace
     OBJECT_CLASSIFICATION_REFINE: false
     POOLING_ALL_LEVELS: true
     POSITIVE_FRACTION: 0.25
-    PREDICTOR: BGNNPredictor
+    PREDICTOR: SquatPredictor
     PREDICT_USE_BIAS: true
     PREDICT_USE_VISION: true
     RELATION_PROPOSAL_MODEL:
-      FOCAL_LOSS_ALPHA: 0.2
-      FOCAL_LOSS_GAMMA: 2.0
       EVAL_MODEL_AUC: false
       FIX_MODEL_AT_ITER: 3000
+      FOCAL_LOSS_ALPHA: 0.2
+      FOCAL_LOSS_GAMMA: 2.0
       IGNORE_FOREGROUND_BOXES_PAIRS: false
       METHOD: RelAwareRelFeature
       PAIR_NUMS_AFTER_FILTERING: 128
       PRETRAIN_ITER_RELNESS_MODULE: 2000
-      PRETRAIN_RELNESS_MODULE: true
+      PRETRAIN_RELNESS_MODULE: false
       PRE_CLSER_LOSS: focal_fgbg_norm
-      REL_AWARE_PREDICTOR_TYPE: hybrid 
+      REL_AWARE_PREDICTOR_TYPE: hybrid
       SET_ON: true
       USE_RELATEDNESS_FOR_PREDICTION_RANKING: false
       USE_SAME_LABEL_WITH_CLSER: false
-      VISUAL_FEATURES_ON: True
+      VISUAL_FEATURES_ON: true
     REL_OBJ_MULTI_TASK_LOSS: false
     REL_PROP:
     - 0.01858
@@ -293,6 +433,7 @@ MODEL:
     - 0.02958
     REMOVE_TAIL_CLASSES: false
     REPEAT_DICT: ''
+    REPEAT_FACTOR: 0.02
     REQUIRE_BOX_OVERLAP: false
     RE_INITIALIZE_CLASSIFIER: false
     TAIL_REPEAT_FACTOR: 0.07
@@ -348,13 +489,14 @@ MODEL:
   VGG:
     VGG16_OUT_CHANNELS: 512
   WEIGHT: catalog://ImageNetPretrained/FAIR/20171220/X-101-32x8d
-OUTPUT_DIR: checkpoints
+OUTPUT_DIR: checkpoints/sgdet-SedanKeySparsePredictor/(2022-11-09_12)FinalExp3(resampling)
 PATHS_CATALOG: pysgg/config/paths_catalog.py
 PATHS_DATA: pysgg/config/../data/datasets
+SEED: 667
 SOLVER:
-  BASE_LR: 0.008
+  BASE_LR: 0.001
   BIAS_LR_FACTOR: 1
-  CHECKPOINT_PERIOD: 2000
+  CHECKPOINT_PERIOD: 1000
   CLIP_NORM: 5.0
   GAMMA: 0.5
   GRAD_NORM_CLIP: 5.0
@@ -366,15 +508,15 @@ SOLVER:
   SCHEDULE:
     COOLDOWN: 0
     FACTOR: 0.5
-    MAX_DECAY_STEP: 3
-    PATIENCE: 6
+    MAX_DECAY_STEP: 2
+    PATIENCE: 2
     THRESHOLD: 0.001
-    TYPE: WarmupMultiStepLR
+    TYPE: WarmupReduceLROnPlateau
   STEPS:
   - 40000
   TO_VAL: true
   UPDATE_SCHEDULE_DURING_LOAD: false
-  VAL_PERIOD: 2000
+  VAL_PERIOD: 1000
   WARMUP_FACTOR: 0.1
   WARMUP_ITERS: 500
   WARMUP_METHOD: linear

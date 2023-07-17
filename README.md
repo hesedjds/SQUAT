@@ -65,16 +65,19 @@ By replacing the parameter of `archive_dir` and `model_name` to the directory an
 
 ## Model Zoo 
 We provide the pre-trained model weights and config files which was used for training the each model. 
+You should use the RHO and BETA as written in the table for evaluating the pre-trained models. 
 ### Visual Genome 
-|      Task        | mR@20 | mR@50 | mR@100 |  R@20 | R@50  | R@100  |                      Link (Google Drive)                     |
-| :--------------: | :---: | :---: |  :---: | :---: | :---: | :----: | :----------------------------------------------------------: |
-| PredCls          | 25.64 | 30.87 | 33.41  | 48.01 | 55.67 | 57.94  |                          [Link](https://drive.google.com/drive/folders/1_S90m0TIZxOD8qjyJtfnhn1AHiAW0Y-N?usp=drive_link)                        |
-| SGCls            | 14.35 | 17.47 | 18.87  | 28.87 | 32.92 | 34.26  |                          [Link](https://drive.google.com/drive/folders/1zF-3eL9_993LdAK_f5xxLrV6kTvzxjsh?usp=drive_link)                                    |
-| SGDet            | 10.57 | 14.12 | 16.47  | 17.85 | 24.51 | 28.93  |                          [Link](https://drive.google.com/drive/folders/1rkTxRiPP_EzmiRbUGY0BnFiri5v1Rn9J?usp=drive_link)                                    |
+|      Task        | RHO | BETA | mR@20 | mR@50 | mR@100 |  R@20 | R@50  | R@100  |                      Link (Google Drive)                     |
+| :--------------: |:---:|:---: | :---: | :---: |  :---: | :---: | :---: | :----: | :----------------------------------------------------------: |
+| PredCls          | 0.5 | 1.0  | 25.64 | 30.87 | 33.41  | 48.01 | 55.67 | 57.94  |  [Link](https://drive.google.com/drive/folders/1_S90m0TIZxOD8qjyJtfnhn1AHiAW0Y-N?usp=drive_link)  |
+| SGCls            | 0.5 | 1.0  | 14.35 | 17.47 | 18.87  | 28.87 | 32.92 | 34.26  |  [Link](https://drive.google.com/drive/folders/1zF-3eL9_993LdAK_f5xxLrV6kTvzxjsh?usp=drive_link)  |
+| SGDet            | 0.35| 0.7  | 10.57 | 14.12 | 16.47  | 17.85 | 24.51 | 28.93  |  [Link](https://drive.google.com/drive/folders/1rkTxRiPP_EzmiRbUGY0BnFiri5v1Rn9J?usp=drive_link)  |
 
 
 ### OpenImages 
-TBU
+|  RHO | BETA | R@50  | rel | phr  | final_score | Link (Google Drive) | 
+| :---: |:---:|:---: | :---: | :---: |  :---: | :---: | 
+| 0.6 | 0.7 | 75.8 | 34.9 | 35.9 | 43.5 | [Link](https://drive.google.com/drive/folders/167eeNYRoCuJwrIvFSKlmRG-uwra2x0h9?usp=drive_link) |
 
 ## Citations
 
